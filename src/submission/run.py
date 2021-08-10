@@ -1,4 +1,5 @@
 import numpy as np
+from model import GPT
 import torch
 import torch.nn as nn
 from tqdm import tqdm
@@ -59,7 +60,8 @@ if args.variant == 'vanilla':
 
     ### TODO:
     ### [part c]: Make some model here
-
+    model = GPT(mconf)
+    
     ### START CODE HERE
     ### END CODE HERE
     pass
@@ -104,6 +106,25 @@ if args.function == 'pretrain':
 elif args.function == 'finetune':
     assert args.writing_params_path is not None
     assert args.finetune_corpus_path is not None
+    
+    if args.reading_params_path is not None:
+        model.load_state_dict(torch.load(args.reading_params_path))
+    
+    text_finetune = open(args.finetune_corpus_path, encoding='utf-8').read()
+    finetune_dataset = dataset.NameDataset(text_finetune, pretrain_dataset)
+
+    print(pretrain_dataset)
+
+    tconf = trainer.TrainerConfig(max_epochs=10, batch_size=512, learning_rate=6e-4,
+                      lr_decay=True, warmup_tokens=512*20, final_tokens=200*len(pretrain_dataset)*block_size,
+                      num_workers=4)
+    trainerModel = trainer.Trainer(model, finetune_dataset, None, tconf)
+
+
+    trainerModel.train()
+    trainerModel.save_checkpoint(args.writing_params_path)
+
+    
 
     ### TODO:
     ### [part c] [part f]:

@@ -33,7 +33,7 @@ class NameDataset(Dataset):
     def __len__(self):
         # returns the length of the dataset
         return len(self.data) - 1
-
+   
     def __getitem__(self, idx):
         inp, oup = self.data[idx].split('\t')
         x = inp + self.MASK_CHAR + oup + self.MASK_CHAR
