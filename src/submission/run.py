@@ -113,16 +113,15 @@ elif args.function == 'finetune':
     text_finetune = open(args.finetune_corpus_path, encoding='utf-8').read()
     finetune_dataset = dataset.NameDataset(text_finetune, pretrain_dataset)
 
-    print(pretrain_dataset)
 
     tconf = trainer.TrainerConfig(max_epochs=10, batch_size=512, learning_rate=6e-4,
                       lr_decay=True, warmup_tokens=512*20, final_tokens=200*len(pretrain_dataset)*block_size,
-                      num_workers=4)
+                      num_workers=4, ckpt_path =args.writing_params_path )
     trainerModel = trainer.Trainer(model, finetune_dataset, None, tconf)
 
 
     trainerModel.train()
-    trainerModel.save_checkpoint(args.writing_params_path)
+   
 
     
 
