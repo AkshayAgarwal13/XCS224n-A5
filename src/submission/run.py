@@ -82,6 +82,18 @@ if args.function == 'pretrain':
     assert args.pretrain_corpus_path is not None
     assert args.writing_params_path is not None
 
+    text_pretrain = open(args.pretrain_corpus_path, encoding='utf-8').read()
+    pretrain_dataset_ml = dataset.CharCorruptionDataset(text_pretrain,block_size)
+
+    tconf = trainer.TrainerConfig(max_epochs=650, batch_size=128, learning_rate=6e-3,
+                      lr_decay=True, warmup_tokens=512*20, final_tokens=200*len(pretrain_dataset)*block_size,
+                      num_workers=4, ckpt_path =args.writing_params_path )
+    trainerModel = trainer.Trainer(model, pretrain_dataset_ml, None, tconf)
+
+
+    trainerModel.train()
+    
+
     ### TODO:
     ### [part f]:
     ### - Given:
@@ -108,7 +120,7 @@ elif args.function == 'finetune':
     assert args.finetune_corpus_path is not None
     
     if args.reading_params_path is not None:
-        model.load_state_dict(torch.load(args.reading_params_path))
+        model.load_state_dict(torch.load(args.pretrain_corpus_path))
     
     text_finetune = open(args.finetune_corpus_path, encoding='utf-8').read()
     finetune_dataset = dataset.NameDataset(text_finetune, pretrain_dataset)
