@@ -205,7 +205,7 @@ class CharCorruptionDataset(Dataset):
         
         print("""""""""""""""""""")
         print(chunk)
-        print(""""""""""""""""'')
+        print("record ends")
 
         length_mask_start = random.randint(0,len(chunk) - 1)
         length_mask_end = random.randint(length_mask_start,len(chunk))
