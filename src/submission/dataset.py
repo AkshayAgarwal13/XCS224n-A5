@@ -203,11 +203,9 @@ class CharCorruptionDataset(Dataset):
         chunk = self.data[idx]
         chunk = chunk[:size]
         
-        print("""""""""""""""""""")
-        print(chunk)
-        print("record ends")
 
-        length_mask_start = random.randint(0,len(chunk) - 1)
+
+        length_mask_start = random.randint(0,len(chunk))
         length_mask_end = random.randint(length_mask_start,len(chunk))
         prefix = chunk[:length_mask_start]
         masked_content = chunk[length_mask_start:length_mask_end]
@@ -258,7 +256,7 @@ if __name__ == '__main__':
         pass
     elif args.dataset_type == 'charcorruption':
         corruption_dataset = CharCorruptionDataset(open('wiki.txt', encoding='utf-8').read(), 128) 
-        for _, example in zip(range(4), corruption_dataset):
+        for _, example in zip(range(10000), corruption_dataset):
             x, y = example
             print('x:', ''.join([corruption_dataset.itos[int(c)] for c in x]))
             print('y:', ''.join([corruption_dataset.itos[int(c)] for c in y]))
